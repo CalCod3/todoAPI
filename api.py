@@ -27,3 +27,17 @@ async def get_task(task_id: int):
     if task is None:
         return JSONResponse(status_code=404, content={"error": "Task not found"})
     return JSONResponse(content=task)
+
+@app.post("/tasks")
+async def create_task(task: dict):
+    if "title" not in task:
+        return JSONResponse(status_code=400, content={"error": "Task title is required"})
+    
+    new_task = {
+        "id": len(tasks) + 1,
+        "title": task.get("title", ""),
+        "done": task.get("done", False),
+    }
+    tasks.append(new_task)
+    return JSONResponse(status_code=201, content=new_task)
+
