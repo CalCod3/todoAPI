@@ -41,3 +41,21 @@ async def create_task(task: dict):
     tasks.append(new_task)
     return JSONResponse(status_code=201, content=new_task)
 
+@app.put("/tasks/{task_id}")
+async def update_task(task_id: int, task: dict):
+    existing_task = next((task for task in tasks if task["id"] == task_id), None)
+    if existing_task is None:
+        return JSONResponse(status_code=404, content={"error": "Task not found"})
+    
+    existing_task["title"] = task.get("title", existing_task["title"])
+    existing_task["done"] = task.get("done", existing_task["done"])
+    
+    return JSONResponse(content=existing_task)
+
+@app.delete("/tasks/{task_id}")
+async def delete_task(task_id: int):
+    global tasks
+    tasks = [task for task in tasks if task["id"] != task_id]
+    if len(tasks) == 0 or all(task["id"] != task_id for task in tasks):
+        return JSONResponse(status_code=404, content={"error": "Task not found"})   
+    return JSONResponse(status_code=204, content={})
