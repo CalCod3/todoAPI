@@ -66,3 +66,9 @@ async def delete_task(task_id: int):
     if len(tasks) == 0 or all(task["id"] != task_id for task in tasks):
         return JSONResponse(status_code=404, content={"error": "Task not found"})   
     return JSONResponse(status_code=204, content={})
+
+@app.get("/tasks/done")
+async def get_done_tasks():
+    """Retrieve all completed tasks."""
+    done_tasks = [task for task in tasks if task["done"]]
+    return JSONResponse(content=done_tasks)
